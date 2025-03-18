@@ -3,41 +3,64 @@
 }
 
 <div class="text-center" id="tableContainer">
-	<div id="detailsModal" class="modal" tabindex="-1">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 id="detailsTitle" class="modal-title"></h5>
-					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-				</div>
-				<div class="modal-body">
-					<p id="detailsBody"></p>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-					<button type="button" class="btn btn-primary">Save changes</button>
-				</div>
+
+</div>
+<div id="editModal" class="modal" tabindex="-1">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 id="detailsTitle" class="modal-title">Modifica</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body" id="editBody">
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+				<button type="button" class="btn btn-primary">Save changes</button>
 			</div>
 		</div>
+	</div>
+</div>
+
+<div id="deleteModal" class="modal fade" tabindex="-1">
+	<div class="modal-dialog modal-sm">
+		<div class="modal-content">
+			<div class="modal-header">Eliminazione</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+			</div>
+			<div class="modal-body">
+				<p>Sei sicuro?</p>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-danger" id="deleteBtn">Elimina</button>
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
 </div>
 
 @section Scripts {
 	<script>
-		document.addEventListener("DOMContentLoaded", async() => {
+
+		document.addEventListener("DOMContentLoaded", () => {
+			loadList();
+		})
+
+		async function loadList() {
 			const tableContainer = document.getElementById('tableContainer');
 			try {
 				let response = await fetch("studenti/get-all");
-				if(response.ok) {
+				if (response.ok) {
 
-				let data = await response.text();
-				tableContainer.innerHTML = data;
+					let data = await response.text();
+					tableContainer.innerHTML = data;
 
 				} else {
 
 					throw new Error("Errore")
 
 				}
-			} catch(error) {
+			} catch (error) {
 
 				console.log(error, "Errore nel recupero dei dati")
 
@@ -51,30 +74,93 @@
 					}
 				]
 			});
+		}
 
-			async function showDetailsModal(id){
-					let response = await fetch(`studenti/details/${id}`);
+		async function showEditModal(id) {
+			try {
+				let response = await fetch(`studenti/edit/${id}`);
 
-					if(response.ok){
-						var detailsObj = await response.json();
-						showModal(detailsObj);
+				if (response.ok) {
+					var data = await response.text();
+					const editModal = document.getElementById('editModal')
+					const modal = new bootstrap.Modal(editModal);
+					const editBody = document.getElementById('editBody');
+					if (editBody) {
+						editBody.innerHTML = data;
 					}
 
+					modal.show();
+
+				} else {
+					throw new Error('errore')
 				}
+			} catch (error) {
+				console.log(error, "Errore nel recupero dei dati")
+			}
 
-				function showModal(response){
+		}
 
-						let detailsModal = new bootstrap.Modal(document.getElementById('detailsModal'));
+		async function sendEditForm() {
+			const form = document.getElementById('editForm');
+			const formData = new FormData(form);
 
-						let title = document.getElementById('detailsTitle');
-						let body = document.getElementById('detailsBody');
 
-						title.textContent = response.name, response.cognome;
-						body.textContent = response.email, response.datanascita;
+			try {
+				const data = await fetch('studenti/edit/save', {
+					method: "POST",
+					body: formData
+				});
 
-						detailsModal.show();
+				if (data.ok) {
+					const response = await data.json();
+					if (response.success) {
+						const editModal = document.getElementById('editModal');
+						const editModalInstance = bootstrap.Modal.getInstance(editModal);
+						editModalInstance.hide();
+						loadList();
+					}
+
+				} else {
+					throw new Error('errore')
 				}
+			} catch (error) {
+				console.log(error, "Errore nel recupero dei dati")
+			}
 
-	})
+	}
+
+	function showDeleteModal(id) {
+    const deleteModal = document.getElementById('deleteModal')
+    const modal = new bootstrap.Modal(deleteModal);
+    const deleteBtn = document.getElementById('deleteBtn');
+
+    modal.show();
+    if (deleteBtn) {
+        deleteBtn.onclick = () => deleteProduct(id)
+    }
+}
+
+	        async function deleteStudente(id){
+
+			try{
+            const result = await fetch(`studente/delete/${id}`, {
+                method: "POST"
+            })
+
+            const response = await result.json();
+
+            if(response.success){
+                const deleteModal = document.getElementById('deleteModal');
+                if(deleteModal){
+                    const deleteModalComponent = bootstrap.Modal.getInstance(deleteModal);
+                    deleteModalComponent.hide();
+                    loadList();
+                }
+            }
+			} catch(error){
+				console.log(error, "Errore nel recupero dei dati")
+			}
+		}
+
 	</script>
 }

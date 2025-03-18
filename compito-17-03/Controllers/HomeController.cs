@@ -3,6 +3,7 @@ using compito_17_03.Models;
 using Microsoft.AspNetCore.Mvc;
 using compito_17_03.Services;
 using compito_17_03.ViewModels;
+using AspNetCoreGeneratedDocument;
 
 namespace compito_17_03.Controllers
 {
@@ -30,27 +31,59 @@ namespace compito_17_03.Controllers
             return PartialView("_StudentiList", studenti);
         }
 
-        [Route("studenti/details/{id:guid}")]
-        public async Task<IActionResult> Details(Guid id)
+        [Route("studenti/edit/{id:guid}")]
+        public async Task<IActionResult> EditStudente(Guid id)
         {
             var studente = await _studentiService.GetStudenteByIdAsync(id);
-
-            if (studente == null)
-            {
-                TempData["Error"] = "Error while finding entity on database";
-                return RedirectToAction("Index");
-            }
-
-            var dettagliViewModel = new DettagliViewModel()
+            var editViewModel = new EditViewModel()
             {
                 Id = studente.Id,
                 Name = studente.Name,
-                Cognome = studente.Cognome,
+                Cognome= studente.Cognome,
                 DataNascita = studente.DataNascita,
                 Email = studente.Email,
             };
 
-            return Json(dettagliViewModel);
+            return PartialView("_EditForm", editViewModel);
+        }
+
+        [HttpPost("studenti/edit/save")]
+        public async Task<IActionResult> Edit(EditViewModel editViewModel)
+        {
+            var result = await _studentiService.EditStudenteAsync(editViewModel);
+
+            if (!result)
+            {
+                return Json(new
+                {
+                    success = false
+                });
+            }
+
+            return Json(new
+            {
+                success = true
+            }); ;
+        }
+
+        [HttpPost]
+        [Route("studente/delete/{id:guid}")]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var result = await _studentiService.DeleteStudenteByIdAsync(id);
+
+            if (!result)
+            {
+                return Json(new
+                {
+                    success = false,
+                });
+            }
+
+            return Json(new
+            {
+                success = true,
+            });
         }
 
         public IActionResult Privacy()

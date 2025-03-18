@@ -21,7 +21,8 @@
                     <td>@studente.DataNascita</td>
                     <td>@studente.Email</td>
                     <td>
-                        <button onclick="showDetailsModal('@studente.Id')">Dettagli</button>
+                        <button class="btn btn-warning" onclick="showEditModal('@studente.Id')">Modifica</button>
+                        <button class="btn btn-danger" id="deleteBtn" onclick="showDeleteModal('@studente.Id')">Elimina</button>
                     </td>
                 </tr>
             }

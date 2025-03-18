@@ -14,6 +14,26 @@ namespace compito_17_03.Services
             _context = context;
         }
 
+        private async Task<bool> SaveAsync()
+        {
+            try
+            {
+                var rowsAffected = await _context.SaveChangesAsync();
+
+                if (rowsAffected > 0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
         public async Task<StudenteViewModel> GetAllStudentiAsync()
         {
             var studenti = new StudenteViewModel();
@@ -39,6 +59,51 @@ namespace compito_17_03.Services
             }
 
             return studente;
+        }
+
+        public async Task<bool> EditStudenteAsync(EditViewModel editViewModel)
+        {
+            try
+            {
+                var studente = await _context.Studenti.FindAsync(editViewModel.Id);
+
+                if (studente == null)
+                {
+                    return false;
+                }
+
+                studente.Name = editViewModel.Name;
+                studente.Cognome = editViewModel.Cognome;
+                studente.DataNascita = editViewModel.DataNascita;
+                studente.Email = editViewModel.Email;
+
+                return await SaveAsync();
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> DeleteStudenteByIdAsync(Guid id)
+        {
+            try
+            {
+                var product = await _context.Studenti.FindAsync(id);
+
+                if (product == null)
+                {
+                    return false;
+                }
+
+                _context.Studenti.Remove(product);
+
+                return await SaveAsync();
+            }
+            catch (Exception ex)
+            {
+                return false;
+            }
         }
     }
 }
