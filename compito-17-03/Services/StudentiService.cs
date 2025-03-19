@@ -29,7 +29,7 @@ namespace compito_17_03.Services
                     return false;
                 }
             }
-            catch (Exception ex)
+            catch
             {
                 return false;
             }
@@ -79,7 +79,7 @@ namespace compito_17_03.Services
 
                 return await SaveAsync();
             }
-            catch (Exception ex)
+            catch
             {
                 return false;
             }
@@ -100,7 +100,7 @@ namespace compito_17_03.Services
 
                 return await SaveAsync();
             }
-            catch (Exception ex)
+            catch
             {
                 return false;
             }

@@ -3,7 +3,6 @@
 }
 
 <div class="text-center" id="tableContainer">
-
 </div>
 <div id="editModal" class="modal" tabindex="-1">
 	<div class="modal-dialog">
@@ -25,16 +24,15 @@
 <div id="deleteModal" class="modal fade" tabindex="-1">
 	<div class="modal-dialog modal-sm">
 		<div class="modal-content">
-			<div class="modal-header">Eliminazione</h5>
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-			</div>
-			<div class="modal-body">
-				<p>Sei sicuro?</p>
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-danger" id="deleteBtn">Elimina</button>
-				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-			</div>
+			<div class="modal-header"><h5>Eliminazione</h5></div>
+			<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+		</div>
+		<div class="modal-body">
+			<p>Sei sicuro?</p>
+		</div>
+		<div class="modal-footer">
+			<button type="button" class="btn btn-danger" id="deleteBtn">Elimina</button>
+			<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
 		</div>
 	</div>
 </div>
@@ -42,125 +40,125 @@
 @section Scripts {
 	<script>
 
-		document.addEventListener("DOMContentLoaded", () => {
-			loadList();
-		})
+				document.addEventListener("DOMContentLoaded", () => {
+					loadList();
+				})
 
-		async function loadList() {
-			const tableContainer = document.getElementById('tableContainer');
-			try {
-				let response = await fetch("studenti/get-all");
-				if (response.ok) {
+				async function loadList() {
+					const tableContainer = document.getElementById('tableContainer');
+					try {
+						let response = await fetch("studenti/get-all");
+						if (response.ok) {
 
-					let data = await response.text();
-					tableContainer.innerHTML = data;
+							let data = await response.text();
+							tableContainer.innerHTML = data;
 
-				} else {
+						} else {
 
-					throw new Error("Errore")
+							throw new Error("Errore")
 
-				}
-			} catch (error) {
+						}
+					} catch (error) {
 
-				console.log(error, "Errore nel recupero dei dati")
+						console.log(error, "Errore nel recupero dei dati")
 
-			}
-
-			new DataTable('#studentiTable', {
-				ordering: true,
-				columnDefs: [
-					{
-						orderable: true
-					}
-				]
-			});
-		}
-
-		async function showEditModal(id) {
-			try {
-				let response = await fetch(`studenti/edit/${id}`);
-
-				if (response.ok) {
-					var data = await response.text();
-					const editModal = document.getElementById('editModal')
-					const modal = new bootstrap.Modal(editModal);
-					const editBody = document.getElementById('editBody');
-					if (editBody) {
-						editBody.innerHTML = data;
 					}
 
-					modal.show();
-
-				} else {
-					throw new Error('errore')
+					new DataTable('#studentiTable', {
+						ordering: true,
+						columnDefs: [
+							{
+								orderable: true
+							}
+						]
+					});
 				}
-			} catch (error) {
-				console.log(error, "Errore nel recupero dei dati")
-			}
 
-		}
+				async function showEditModal(id) {
+					try {
+						let response = await fetch(`studenti/edit/${id}`);
 
-		async function sendEditForm() {
-			const form = document.getElementById('editForm');
-			const formData = new FormData(form);
+						if (response.ok) {
+							var data = await response.text();
+							const editModal = document.getElementById('editModal')
+							const modal = new bootstrap.Modal(editModal);
+							const editBody = document.getElementById('editBody');
+							if (editBody) {
+								editBody.innerHTML = data;
+							}
 
+							modal.show();
 
-			try {
-				const data = await fetch('studenti/edit/save', {
-					method: "POST",
-					body: formData
-				});
-
-				if (data.ok) {
-					const response = await data.json();
-					if (response.success) {
-						const editModal = document.getElementById('editModal');
-						const editModalInstance = bootstrap.Modal.getInstance(editModal);
-						editModalInstance.hide();
-						loadList();
+						} else {
+							throw new Error('errore')
+						}
+					} catch (error) {
+						console.log(error, "Errore nel recupero dei dati")
 					}
 
-				} else {
-					throw new Error('errore')
 				}
-			} catch (error) {
-				console.log(error, "Errore nel recupero dei dati")
+
+				async function sendEditForm() {
+					const form = document.getElementById('editForm');
+					const formData = new FormData(form);
+
+
+					try {
+						const data = await fetch('studenti/edit/save', {
+							method: "POST",
+							body: formData
+						});
+
+						if (data.ok) {
+							const response = await data.json();
+							if (response.success) {
+								const editModal = document.getElementById('editModal');
+								const editModalInstance = bootstrap.Modal.getInstance(editModal);
+								editModalInstance.hide();
+								loadList();
+							}
+
+						} else {
+							throw new Error('errore')
+						}
+					} catch (error) {
+						console.log(error, "Errore nel recupero dei dati")
+					}
+
 			}
 
-	}
+			function showDeleteModal(id) {
+			const deleteModal = document.getElementById('deleteModal')
+			const modal = new bootstrap.Modal(deleteModal);
+			const deleteBtn = document.getElementById('deleteBtn');
 
-	function showDeleteModal(id) {
-    const deleteModal = document.getElementById('deleteModal')
-    const modal = new bootstrap.Modal(deleteModal);
-    const deleteBtn = document.getElementById('deleteBtn');
-
-    modal.show();
-    if (deleteBtn) {
-        deleteBtn.onclick = () => deleteProduct(id)
-    }
-}
-
-	        async function deleteStudente(id){
-
-			try{
-            const result = await fetch(`studente/delete/${id}`, {
-                method: "POST"
-            })
-
-            const response = await result.json();
-
-            if(response.success){
-                const deleteModal = document.getElementById('deleteModal');
-                if(deleteModal){
-                    const deleteModalComponent = bootstrap.Modal.getInstance(deleteModal);
-                    deleteModalComponent.hide();
-                    loadList();
-                }
-            }
-			} catch(error){
-				console.log(error, "Errore nel recupero dei dati")
+			modal.show();
+			if (deleteBtn) {
+				deleteBtn.onclick = () => deleteProduct(id)
 			}
 		}
+
+					async function deleteStudente(id){
+
+					try{
+					const result = await fetch(`studente/delete/${id}`, {
+						method: "POST"
+					})
+
+					const response = await result.json();
+
+					if(response.success){
+						const deleteModal = document.getElementById('deleteModal');
+						if(deleteModal){
+							const deleteModalComponent = bootstrap.Modal.getInstance(deleteModal);
+							deleteModalComponent.hide();
+							loadList();
+						}
+					}
+					} catch(error){
+						console.log(error, "Errore nel recupero dei dati")
+					}
+				}
 
 	</script>
 }
