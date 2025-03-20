@@ -16,13 +16,13 @@
             @foreach (var studente in Model.Studenti)
             {
                 <tr>
-                    <td>@studente.Name</td>
+                    <td>@studente.Nome</td>
                     <td>@studente.Cognome</td>
                     <td>@studente.DataNascita</td>
                     <td>@studente.Email</td>
                     <td>
                         <button class="btn btn-warning" onclick="showEditModal('@studente.Id')">Modifica</button>
-                        <button class="btn btn-danger" id="deleteBtn" onclick="showDeleteModal('@studente.Id')">Elimina</button>
+                        <button class="btn btn-danger" onclick="showDeleteModal('@studente.Id')">Elimina</button>
                     </td>
                 </tr>
             }

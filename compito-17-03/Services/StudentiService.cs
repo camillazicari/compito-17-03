@@ -39,7 +39,8 @@ namespace compito_17_03.Services
             var studenti = new StudenteViewModel();
             try
             {
-                studenti.Studenti = await _context.Studenti.ToListAsync();
+                studenti.Studenti = await _context.ApplicationUsers.ToListAsync();
+
             }
             catch
             {
@@ -49,9 +50,9 @@ namespace compito_17_03.Services
             return studenti;
         }
 
-        public async Task<Studente> GetStudenteByIdAsync(Guid id)
+        public async Task<ApplicationUser> GetStudenteByIdAsync(string id)
         {
-            var studente = await _context.Studenti.FindAsync(id);
+            var studente = await _context.ApplicationUsers.FindAsync(id);
 
             if (studente == null)
             {
@@ -65,14 +66,14 @@ namespace compito_17_03.Services
         {
             try
             {
-                var studente = await _context.Studenti.FindAsync(editViewModel.Id);
+                var studente = await _context.ApplicationUsers.FindAsync(editViewModel.Id);
 
                 if (studente == null)
                 {
                     return false;
                 }
 
-                studente.Name = editViewModel.Name;
+                studente.Nome = editViewModel.Name;
                 studente.Cognome = editViewModel.Cognome;
                 studente.DataNascita = editViewModel.DataNascita;
                 studente.Email = editViewModel.Email;
@@ -85,18 +86,18 @@ namespace compito_17_03.Services
             }
         }
 
-        public async Task<bool> DeleteStudenteByIdAsync(Guid id)
+        public async Task<bool> DeleteStudenteByIdAsync(string id)
         {
             try
             {
-                var product = await _context.Studenti.FindAsync(id);
+                var user = await _context.ApplicationUsers.FindAsync(id);
 
-                if (product == null)
+                if (user == null)
                 {
                     return false;
                 }
 
-                _context.Studenti.Remove(product);
+                _context.ApplicationUsers.Remove(user);
 
                 return await SaveAsync();
             }

@@ -32,13 +32,13 @@ namespace compito_17_03.Controllers
         }
 
         [Route("studenti/edit/{id:guid}")]
-        public async Task<IActionResult> EditStudente(Guid id)
+        public async Task<IActionResult> EditStudente(string id)
         {
             var studente = await _studentiService.GetStudenteByIdAsync(id);
             var editViewModel = new EditViewModel()
             {
                 Id = studente.Id,
-                Name = studente.Name,
+                Name = studente.Nome,
                 Cognome= studente.Cognome,
                 DataNascita = studente.DataNascita,
                 Email = studente.Email,
@@ -68,7 +68,7 @@ namespace compito_17_03.Controllers
 
         [HttpPost]
         [Route("studente/delete/{id:guid}")]
-        public async Task<IActionResult> Delete(Guid id)
+        public async Task<IActionResult> Delete(string id)
         {
             var result = await _studentiService.DeleteStudenteByIdAsync(id);
 
