@@ -27,7 +27,6 @@ namespace compito_17_03.Controllers
             _roleManager = roleManager;
         }
 
-        [AllowAnonymous]
         public IActionResult Register()
         {
             return View();
@@ -53,7 +52,7 @@ namespace compito_17_03.Controllers
             }
 
             var user = await _userManager.FindByEmailAsync(newUser.Email);
-            //await _userManager.AddToRoleAsync(user, "User");
+            await _userManager.AddToRoleAsync(user, "Studente");
 
             return RedirectToAction("Index", "Home");
         }
@@ -96,6 +95,15 @@ namespace compito_17_03.Controllers
                 return View();
             }
 
+            return RedirectToAction("Index", "Home");
+        }
+
+
+        [Authorize]
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
+            await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Index", "Home");
         }
     }

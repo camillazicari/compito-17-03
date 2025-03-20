@@ -2,6 +2,9 @@
 	ViewData["Title"] = "Home Page";
 }
 
+@if(@User.Identity.IsAuthenticated){
+<h1 class="text-center">Benvenuto, @User.Identity.Name</h1>
+	@if (User.IsInRole("Docente")){
 <div class="text-center" id="tableContainer">
 </div>
 <div id="editModal" class="modal" tabindex="-1">
@@ -36,6 +39,12 @@
 		</div>
 	</div>
 </div>
+	}
+
+} else {
+	<h1 class="text-center">Benvenuto, accedi o registrati.</h1>
+}
+
 
 @section Scripts {
 	<script>
